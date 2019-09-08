@@ -1,6 +1,7 @@
 package runners
 
 import (
+	"errors"
 	"gopkg.in/tomb.v1"
 	"sync"
 )
@@ -40,7 +41,6 @@ func (p *BatchStringProcessor) AddJobs(transformations []ToString) []ToString {
 	return p.jobs
 }
 
-
 /*
 Start runs all the given functions concurrently until either they all complete or one returns an error, in which case it returns that error.
 The functions are passed a channel which will be closed when the function should stop.
@@ -66,7 +66,7 @@ func (p BatchStringProcessor) Run() ([]string, error) {
 			defer wg.Done()
 			result, err := functionToExecute(crypt.Dying())
 			if err != nil {
-				crypt.Kill(err)
+				crypt.Kill(errors.New(string(index) + ": " + err.Error()))
 			}
 			results[index] = result
 		}(index, toExecute)
@@ -95,7 +95,7 @@ func (p *BatchStringProcessor) prime() {
 	p.mu.Lock()
 	p.primedJobs = make([]func(<-chan struct{}) (string, error), len(p.jobs))
 
-	for i := 0;  i <= len(p.primedJobs)-1; i++ {
+	for i := 0; i <= len(p.primedJobs)-1; i++ {
 		job := p.jobs[i]
 		primedJob := func(_ <-chan struct{}) (string, error) {
 			result, err := job()
