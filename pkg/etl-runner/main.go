@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-
 	toStringTransformations := []runners.ToString{
 		func() (string, error) {
 			return "s1", nil
