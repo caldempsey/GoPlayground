@@ -1,30 +1,31 @@
-package runners
+package processors
 
 import (
 	"errors"
+	"github.com/mmacheerpuppy/GoPlayground/pkg/job-runners/internal/interfaces/runners"
 	"gopkg.in/tomb.v1"
 	"sync"
 )
 
-// BatchStringProcessor is responsible for providing a runtime for concurrently batch processing
+// StringBatchProcessor is responsible for providing a runtime for concurrently batch processing
 // ToStringTransformations and returning the results.
-type BatchStringProcessor struct {
-	jobs       []ToStringJob
+type StringBatchProcessor struct {
+	jobs       []runners.ToStringJob
 	primedJobs []func(<-chan struct{}) (string, error)
 	mu sync.Mutex
 }
 
-func NewBatchStringProcessor() *BatchStringProcessor {
+func NewBatchStringProcessor() *StringBatchProcessor {
 	var mu sync.Mutex
-	return &BatchStringProcessor{
-		jobs: []ToStringJob{},
+	return &StringBatchProcessor{
+		jobs: []runners.ToStringJob{},
 		primedJobs: []func(<-chan struct{}) (string, error){},
 		mu: mu,
 	}
 }
 
 // AddJob a new process.
-func (p *BatchStringProcessor) AddJob(job ToStringJob) []ToStringJob {
+func (p *StringBatchProcessor) AddJob(job runners.ToStringJob) []runners.ToStringJob {
 	defer p.mu.Unlock()
 	p.mu.Lock()
 
@@ -33,7 +34,7 @@ func (p *BatchStringProcessor) AddJob(job ToStringJob) []ToStringJob {
 }
 
 // AddJob a slice of processes.
-func (p *BatchStringProcessor) AddJobs(transformations []ToStringJob) []ToStringJob {
+func (p *StringBatchProcessor) AddJobs(transformations []runners.ToStringJob) []runners.ToStringJob {
 	defer p.mu.Unlock()
 	p.mu.Lock()
 
@@ -41,11 +42,10 @@ func (p *BatchStringProcessor) AddJobs(transformations []ToStringJob) []ToString
 	return p.jobs
 }
 
-/*
-Start runs all the given functions concurrently until either they all complete or one returns an error, in which case it returns that error.
-The functions are passed a channel which will be closed when the function should stop.
-*/
-func (p BatchStringProcessor) Run() ([]string, error) {
+
+// Start runs all the given functions concurrently until either they all complete or one returns an error, in which case it returns that error.
+// The functions are passed a channel which will be closed when the function should stop.
+func (p StringBatchProcessor) Run() ([]string, error) {
 	p.prime()
 	defer p.mu.Unlock()
 	p.mu.Lock()
@@ -87,10 +87,9 @@ func (p BatchStringProcessor) Run() ([]string, error) {
 	return results, crypt.Err()
 }
 
-/*
-Prime wraps the runtime jobs in a function which provides a channel that can be used to track the results.
-*/
-func (p *BatchStringProcessor) prime() {
+
+// Prime wraps the runtime jobs in a function which provides a channel that can be used to track the results.
+func (p *StringBatchProcessor) prime() {
 	defer p.mu.Unlock()
 	p.mu.Lock()
 	p.primedJobs = make([]func(<-chan struct{}) (string, error), len(p.jobs))

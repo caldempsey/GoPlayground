@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"github.com/go-gota/gota/dataframe"
 	"github.com/kniren/gota/series"
-	"github.com/mmacheerpuppy/GoPlayground/pkg/job-runners/runners"
+	"github.com/mmacheerpuppy/GoPlayground/pkg/job-runners/internal/interfaces/runners"
+	"github.com/mmacheerpuppy/GoPlayground/pkg/job-runners/internal/processors"
 	"log"
 	"os"
 )
@@ -21,7 +22,7 @@ func main() {
 			return "s3", nil
 		},
 	}
-	batchStringProcessor := runners.NewBatchStringProcessor()
+	batchStringProcessor := processors.NewBatchStringProcessor()
 	batchStringProcessor.AddJobs(toStringTransformations)
 	jobResults, err := batchStringProcessor.Run()
 	if err != nil {
