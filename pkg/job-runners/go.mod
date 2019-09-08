@@ -1,4 +1,4 @@
-module github.com/mmacheerpuppy/GoPlayground/pkg/etl-runner
+module github.com/mmacheerpuppy/GoPlayground/pkg/job-runners
 
 go 1.12
 
