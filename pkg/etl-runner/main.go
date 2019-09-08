@@ -11,7 +11,7 @@ import (
 
 func main() {
 
-	toStringTransformations := []runners.ToStringJob{
+	toStringTransformations := []runners.ToString{
 		func() (string, error) {
 			return "s1", nil
 		},

@@ -8,7 +8,7 @@ import (
 // BatchStringProcessor is responsible for providing a runtime for concurrently batch processing
 // ToStringTransformations and returning the results.
 type BatchStringProcessor struct {
-	jobs       []ToStringJob
+	jobs       []ToString
 	primedJobs []func(<-chan struct{}) (string, error)
 	mu sync.Mutex
 }
@@ -16,14 +16,14 @@ type BatchStringProcessor struct {
 func NewBatchStringProcessor() *BatchStringProcessor {
 	var mu sync.Mutex
 	return &BatchStringProcessor{
-		jobs: []ToStringJob{},
+		jobs: []ToString{},
 		primedJobs: []func(<-chan struct{}) (string, error){},
 		mu: mu,
 	}
 }
 
 // AddJob a new process.
-func (p *BatchStringProcessor) AddJob(job ToStringJob) []ToStringJob {
+func (p *BatchStringProcessor) AddJob(job ToString) []ToString {
 	defer p.mu.Unlock()
 	p.mu.Lock()
 
@@ -32,7 +32,7 @@ func (p *BatchStringProcessor) AddJob(job ToStringJob) []ToStringJob {
 }
 
 // AddJob a slice of processes.
-func (p *BatchStringProcessor) AddJobs(transformations []ToStringJob) []ToStringJob {
+func (p *BatchStringProcessor) AddJobs(transformations []ToString) []ToString {
 	defer p.mu.Unlock()
 	p.mu.Lock()
 
