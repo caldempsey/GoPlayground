@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-gota/gota/dataframe"
 	"github.com/kniren/gota/series"
-	"github.com/mmacheerpuppy/GoPlayground/pkg/etl-runner/runners"
+	"github.com/mmacheerpuppy/GoPlayground/pkg/job-runners/runners"
 	"log"
 	"os"
 )
