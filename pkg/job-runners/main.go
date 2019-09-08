@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	toStringTransformations := []runners.ToString{
+	toStringTransformations := []runners.ToStringJob{
 		func() (string, error) {
 			return "s1", nil
 		},
