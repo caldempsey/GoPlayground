@@ -8,6 +8,7 @@ import (
 	"github.com/mmacheerpuppy/GoPlayground/pkg/job-runners/internal/processors"
 	"log"
 	"os"
+	"time"
 )
 
 func main() {
@@ -22,7 +23,7 @@ func main() {
 			return "s3", nil
 		},
 	}
-	batchStringProcessor := processors.NewBatchStringProcessor()
+	batchStringProcessor := processors.NewBatchStringProcessor(9 * time.Second)
 	batchStringProcessor.AddJobs(toStringTransformations)
 	jobResults, err := batchStringProcessor.Run()
 	if err != nil {
